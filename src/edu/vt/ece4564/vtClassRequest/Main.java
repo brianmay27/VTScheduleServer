@@ -37,12 +37,23 @@ public class Main extends HttpServlet
     public Main(char[] user, char[] password) {
         try
         {
-            Student student = new Student("bmac", "suhwknds", "BSCPECPE");
-//            sqlC.addStudent(student);
-//            users = sqlC.getStudents();
-            getDARS dars = new getDARS(student, user, password);
-            Thread thead = new Thread(dars);
-            thead.run();
+            Student student = new Student("bmac", "shxn", "BSCPECPE");
+            try
+            {
+                sqlC.addStudent(student);
+                student = sqlC.getStudent("bmac");
+
+            }
+            catch (SQLException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            if (student != null) {
+                getDARS dars = new getDARS(student, user, password);
+                Thread thead = new Thread(dars);
+                thead.run();
+            }
 
         }
         catch (LoginException e)

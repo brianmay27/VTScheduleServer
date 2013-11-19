@@ -11,6 +11,19 @@ public class Student {
 	private String major;
 	
 	public Student() {
+	private String latestDars;
+
+	public String getLatestDars()
+    {
+        return latestDars;
+    }
+
+    public void setLatestDars(String latestDars)
+    {
+        this.latestDars = latestDars;
+    }
+
+    public Student() {
 		courseHistory = new HashMap<String,String>();
 		pid = null;
 		passwordHash = null;

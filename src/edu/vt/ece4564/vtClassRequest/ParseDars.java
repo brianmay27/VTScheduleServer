@@ -41,12 +41,12 @@ public class ParseDars
         arrayMakePreBrian();
         arrayMakeRequirements();
 
-        arrayDisplayPreBrian();
-        arrayDisplayRequirements();
-        arrayDisplayTakenCourse();
+        //arrayDisplayPreBrian();
+        //arrayDisplayRequirements();
+        //arrayDisplayTakenCourse();
 
         // arrayDisplayCourseRefined();
-        //arrayDisplayCourseRaw();
+        arrayDisplayCourseRaw();
     }
     public void arrayDisplayRequirements(){
         int id,hours,sameas;
@@ -157,7 +157,7 @@ public class ParseDars
                 switchme=true;
             }
             if(switchme==true && temp[i].contains("auditLineType_22_okSubrequirementCourses")){
-                parse22(temp[i]);
+                //parse22(temp[i]);
 
             }
 
