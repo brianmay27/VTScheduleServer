@@ -69,13 +69,13 @@ public class Main extends HttpServlet
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Server server = new Server(8081);
-        WebAppContext content = new WebAppContext();
-        content.setWar("war");
-        content.setContextPath("/");
-        server.setHandler(content);
-        server.start();
-        server.join();
+//        Server server = new Server(8081);
+//        WebAppContext content = new WebAppContext();
+//        content.setWar("war");
+//        content.setContextPath("/");
+//        server.setHandler(content);
+//        server.start();
+//        server.join();
     }
 
 }
