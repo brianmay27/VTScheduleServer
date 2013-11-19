@@ -90,8 +90,11 @@ public class SqlConnection
                 stmt = c.prepareStatement("SELECT * FROM student WHERE id=?");
                 stmt.setString(1, student.getPid());
                 result = stmt.executeQuery();
-                if (result.getBytes("data").length != 0)
+                try {
+                    int n = result.getBytes("data").length;
+                } catch (Exception e) {
                     return false;
+                }
 
             } finally {
                 result.close();
@@ -109,6 +112,48 @@ public class SqlConnection
                 return false;
             stmt.setString(1, student.getPid());
             stmt.setBytes(2, data);
+            stmt.executeUpdate();
+            stmt.close();
+            return true;
+        }
+        finally {
+            result.close();
+            stmt.close();
+        }
+
+    }
+
+    public boolean updateStudent(Student student) throws SQLException {
+        PreparedStatement stmt = null;
+        ResultSet result = null;
+        try
+        {
+            try {
+                stmt = c.prepareStatement("SELECT * FROM student WHERE id=?");
+                stmt.setString(1, student.getPid());
+                result = stmt.executeQuery();
+                try {
+                    int n = result.getBytes("data").length;
+                }catch (Exception e) {
+                    return false;
+                }
+
+            } finally {
+                result.close();
+                stmt.close();
+            }
+            stmt = c.prepareStatement("UPDATE student SET data=? WHERE id=?");
+            byte[] data = null;
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); ObjectOutput out = new ObjectOutputStream(bos)) {
+                out.writeObject(student);
+                data = bos.toByteArray();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (data == null)
+                return false;
+            stmt.setString(2, student.getPid());
+            stmt.setBytes(1, data);
             stmt.executeUpdate();
             stmt.close();
             return true;

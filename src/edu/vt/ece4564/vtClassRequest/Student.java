@@ -10,8 +10,19 @@ public class Student implements Serializable{
 	private String pid;
 	private String passwordHash;
 	private String major;
+	private String latestDars;
 
-	public Student() {
+	public String getLatestDars()
+    {
+        return latestDars;
+    }
+
+    public void setLatestDars(String latestDars)
+    {
+        this.latestDars = latestDars;
+    }
+
+    public Student() {
 		courseHistory = new HashMap<String,String>();
 		pid = null;
 		passwordHash = null;

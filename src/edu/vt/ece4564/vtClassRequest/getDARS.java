@@ -55,7 +55,12 @@ public class getDARS implements Runnable
     {
         try
         {
-            requestWhatIf(sess, idm, "BSCPECPE");
+            if (student.getLatestDars() == null) {
+                requestWhatIf(sess, idm, "BSCPECPE");
+            }
+            else {
+                ParseDars dars = new ParseDars(student.getLatestDars());
+            }
         }
         catch (Exception e)
         {
@@ -135,9 +140,11 @@ public class getDARS implements Runnable
             conn.setRequestProperty("Referer", "https://banweb.banner.vt.edu/ssb/prod/hzsksaud.P_CheckAudit");
             conn.connect();
             String html = getHtml(conn);
+            student.setLatestDars(html);
+            Main.sqlC.updateStudent(student);
             ParseDars dars = new ParseDars(html);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
