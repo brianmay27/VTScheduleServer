@@ -83,23 +83,10 @@ public class SqlConnection
 
     public boolean addStudent(Student student) throws SQLException {
         PreparedStatement stmt = null;
-        ResultSet result = null;
         try
         {
-            try {
-                stmt = c.prepareStatement("SELECT * FROM student WHERE id=?");
-                stmt.setString(1, student.getPid());
-                result = stmt.executeQuery();
-                try {
-                    int n = result.getBytes("data").length;
-                } catch (Exception e) {
-                    return false;
-                }
-
-            } finally {
-                result.close();
-                stmt.close();
-            }
+            if (studentExists(student))
+                return false;
             stmt = c.prepareStatement("INSERT INTO student (id, data) VALUES (?,?)");
             byte[] data = null;
             try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); ObjectOutput out = new ObjectOutputStream(bos)) {
@@ -115,14 +102,41 @@ public class SqlConnection
             stmt.executeUpdate();
             stmt.close();
             return true;
-        }
-        finally {
-            result.close();
-            stmt.close();
+        } finally {
+            if (stmt != null)
+                stmt.close();
         }
 
     }
+    private boolean studentExists(Student student) {
+        PreparedStatement stmt = null;
+        ResultSet result = null;
+        try {
+            stmt = c.prepareStatement("SELECT * FROM student WHERE id=?");
+            stmt.setString(1, student.getPid());
+            result = stmt.executeQuery();
+            try {
+                int n = result.getBytes("data").length;
+            } catch (Exception e) {
+                return false;
+            }
 
+        } catch (Exception e) {
+
+        } finally {
+                try
+                {
+                    result.close();
+                    stmt.close();
+                }
+                catch (SQLException e)
+                {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        return true;
+    }
     public boolean updateStudent(Student student) throws SQLException {
         PreparedStatement stmt = null;
         ResultSet result = null;

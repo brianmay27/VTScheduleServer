@@ -1,5 +1,7 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import java.io.Serializable;
+
 // -------------------------------------------------------------------------
 /**
  *  Write a one-sentence summary of your class here.
@@ -10,7 +12,7 @@ package edu.vt.ece4564.vtClassRequest;
  *  @version Nov 19, 2013
  */
 
-public class RequirementsStruct
+public class RequirementsStruct implements Serializable
 {
     String requirementName;
     int requiremnetHours;

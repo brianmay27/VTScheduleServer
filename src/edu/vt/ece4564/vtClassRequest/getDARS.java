@@ -1,5 +1,7 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.net.ProtocolException;
 import java.util.Timer;
 import java.util.TimeZone;
@@ -42,6 +44,7 @@ public class getDARS implements Runnable
     private String idm;
     private String sess;
     private Student student;
+    private boolean gotNewWhatIf = false;
     public getDARS(Student student, char[] userName, char[] password) throws LoginException {
         this.student = student;
         cas = new CASManager();
@@ -57,10 +60,27 @@ public class getDARS implements Runnable
         {
             if (student.getLatestDars() == null) {
                 requestWhatIf(sess, idm, "BSCPECPE");
+                while (!gotNewWhatIf) {
+                    Thread.sleep(500);
+                }
             }
-            else {
+            else if (student.getClassesNeeded() == null) {
                 ParseDars dars = new ParseDars(student.getLatestDars());
+                student.setClassesNeeded(dars);
+            } if (student.getClassMap() == null) {
+                HashMap<String, ArrayList<Course>> ClassMap = new HashMap<>();
+                for (String course : student.getClassesNeeded().arrayPreBrian) {
+                    String[] split = course.split(" ");
+                    ArrayList<Course> courses = TimetableScraper.getCourses(split[1], split[2], "012014");
+                    ClassMap.put(split[1] + " " +split[2], courses);
+                    System.out.println(split[1] + " " + split[2]);
+                    for (Course timeCourse: courses) {
+                        System.out.println("  : " + timeCourse.toString());
+                    }
+                }
+                student.setClassMap(ClassMap);
             }
+            //TODO sort stuff;
         }
         catch (Exception e)
         {
@@ -119,6 +139,7 @@ public class getDARS implements Runnable
                     if (todayStr.equals(dateStr)) {
                         requestCheckDars.cancel();
                         processWhatIf(sess, idm, DarUrl);
+                        gotNewWhatIf = true;
                     }
                     System.out.println(DarUrl);
                 } else {
@@ -143,6 +164,7 @@ public class getDARS implements Runnable
             student.setLatestDars(html);
             Main.sqlC.updateStudent(student);
             ParseDars dars = new ParseDars(html);
+            student.setClassesNeeded(dars);
         } catch (Exception e) {
             e.printStackTrace();
         }

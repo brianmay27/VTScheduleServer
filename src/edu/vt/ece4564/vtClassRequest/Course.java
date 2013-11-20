@@ -1,7 +1,9 @@
 package edu.vt.ece4564.vtClassRequest;
 
-public class Course {
-	
+import java.io.Serializable;
+
+public class Course implements Serializable{
+
 	public static final int MONDAY = 1;
 	public static final int TUESDAY = 2;
 	public static final int WEDNESDAY = 3;
@@ -25,7 +27,7 @@ public class Course {
 	private String classRestrictions;
 	private int credits;
 	private int id;
-	
+
 	public Course() {
 		// Initialize unnecessary stuff
 		this.name = null;
@@ -45,13 +47,13 @@ public class Course {
 		this.prereqs = null;
 		this.classRestrictions = null;
 	}
-	
+
 	public Course(String name, String subj, String crse, int credits) {
 		this.name = name;
 		this.subj = subj;
 		this.crse = crse;
 		this.credits = credits;
-		
+
 		// Initialize unnecessary stuff
 		this.crn = null;
 		this.startTime = -1;
@@ -66,7 +68,28 @@ public class Course {
 		this.prereqs = null;
 		this.classRestrictions = null;
 	}
-	
+
+	   public Course(String subj, String crse) {
+	        this.name = null;
+	        this.subj = subj;
+	        this.crse = crse;
+	        this.credits = -1;
+
+	        // Initialize unnecessary stuff
+	        this.crn = null;
+	        this.startTime = -1;
+	        this.endTime = -1;
+	        this.days = null;
+	        this.location = null;
+	        this.additionalDays = null;
+	        this.additionalStartTime = -1;
+	        this.additionalEndTime = -1;
+	        this.additionalLocation = null;
+	        this.instructor = null;
+	        this.prereqs = null;
+	        this.classRestrictions = null;
+	    }
+
 	public Course(String name, String subj, String crse, String crn, int credits, int startTime, int endTime, int[] days) {
 		this.name = name;
 		this.subj = subj;
@@ -76,7 +99,7 @@ public class Course {
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.days = days;
-		
+
 		// Initialize unnecessary stuff
 		this.location = null;
 		this.additionalDays = null;
@@ -159,7 +182,7 @@ public class Course {
 	public void setAdditionalLocation(String additionalLocation) {
 		this.additionalLocation = additionalLocation;
 	}
-	
+
 	public String getCrse() {
 		return crse;
 	}
@@ -228,26 +251,26 @@ public class Course {
 		StringBuilder sb = new StringBuilder("Course: " + name + "\n" +
 											 subj + "-" + crse + "\n" +
 											 "CRN: " + crn + "\n");
-		
+
 		if(startTime != -1 && endTime != -1 && days != null) {
 			sb.append(daysToString(days) + " " + startTime / 60 + ":" + startTime % 60 + "-" + endTime / 60 + ":" + endTime % 60 + "\n");
 		}
-		
+
 		if(additionalStartTime != -1 && additionalEndTime != -1 && additionalDays != null) {
-			sb.append("Additional Times: " + daysToString(additionalDays) + " " + additionalStartTime / 60 + ":" + 
+			sb.append("Additional Times: " + daysToString(additionalDays) + " " + additionalStartTime / 60 + ":" +
 					additionalStartTime % 60 + "-" + additionalEndTime / 60 + ":" + additionalEndTime % 60 + "\n");
 		}
-		
+
 		if(location != null) {
 			sb.append("Location: " + location + "\n");
 		}
-		
+
 		sb.append("Instructor: " + instructor + "\n" +
 				  "Credits: " + credits);
-		
+
 		return sb.toString();
 	}
-	
+
 	private String daysToString(int[] days) {
 		StringBuilder sb = new StringBuilder();
 		for(int d : days) {

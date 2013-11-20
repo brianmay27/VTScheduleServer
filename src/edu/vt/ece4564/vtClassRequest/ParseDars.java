@@ -1,5 +1,6 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import java.io.Serializable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.Scanner;
  *  @version Nov 19, 2013
  */
 
-public class ParseDars
+public class ParseDars implements Serializable
 {
 
     ArrayList<String> array17 = new ArrayList<String>();
@@ -35,18 +36,17 @@ public class ParseDars
     public ParseDars(String html) {
         this.html = html;
 
-
         arrayHtmlByLine();
         arrayFilterImportantHtml();
         arrayMakePreBrian();
         arrayMakeRequirements();
 
-        //arrayDisplayPreBrian();
-        //arrayDisplayRequirements();
-        //arrayDisplayTakenCourse();
+        arrayDisplayPreBrian();
+        arrayDisplayRequirements();
+        arrayDisplayTakenCourse();
 
         // arrayDisplayCourseRefined();
-        arrayDisplayCourseRaw();
+        //arrayDisplayCourseRaw();
     }
     public void arrayDisplayRequirements(){
         int id,hours,sameas;
@@ -150,14 +150,14 @@ public class ParseDars
 
     public void arrayHtmlByLine() {
         boolean switchme=false;
-        String[] temp = html.split("\n");
+        String[] temp = html.split("</span>");
         for (int i = 0; i < temp.length; i++) {
             arrayHtml.add(temp[i]);
             if(temp[i].contains("COURSE HISTORY")){
                 switchme=true;
             }
             if(switchme==true && temp[i].contains("auditLineType_22_okSubrequirementCourses")){
-                //parse22(temp[i]);
+                parse22(temp[i]);
 
             }
 
