@@ -19,16 +19,16 @@ import javax.servlet.http.HttpServlet;
 public class UserRequest extends HttpServlet
 {
     protected void doPost(HttpServletRequest request, HttpServletResponse responce) throws IOException {
-        String username = request.getParameter("Username");
-        char[] password = request.getParameter("Passwd").toCharArray();
-        int minCredit = Integer.valueOf(request.getParameter("Min-credit"));
-        int maxCredit = Integer.valueOf(request.getParameter("Max-credit"));
-        String major = request.getParameter("Major");
+        String username = request.getParameter("username");
+        char[] password = request.getParameter("passwd").toCharArray();
+        int minCredit = Integer.valueOf(request.getParameter("min"));
+        int maxCredit = Integer.valueOf(request.getParameter("max"));
+        String major = request.getParameter("major");
         try
         {
             Student student = Main.sqlC.getStudent(username);
             if (student == null) {
-                //new Student
+                student = new Student(username, String.valueOf(password.hashCode()), major);
             } else {
                 if (!student.getPasswordHash().equals(new String(password).hashCode())) {
                     //Password is bad

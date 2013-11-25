@@ -71,7 +71,7 @@ public class getDARS implements Runnable
                 HashMap<String, ArrayList<Course>> ClassMap = new HashMap<>();
                 for (String course : student.getClassesNeeded().arrayPreBrian) {
                     String[] split = course.split(" ");
-                    ArrayList<Course> courses = TimetableScraper.getCourses(split[1], split[2], "012014");
+                    ArrayList<Course> courses = TimetableScraper.getCourses(split[1].toUpperCase(), split[2], "201401");
                     ClassMap.put(split[1] + " " +split[2], courses);
                     System.out.println(split[1] + " " + split[2]);
                     for (Course timeCourse: courses) {
