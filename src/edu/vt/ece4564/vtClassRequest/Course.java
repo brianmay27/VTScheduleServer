@@ -85,6 +85,14 @@ public class Course implements Serializable {
 		this.prereqs = null;
 		this.classRestrictions = null;
 	}
+	
+	public boolean overlaps(Course c) {
+		if(c.getTime().overlaps(time)) return true;
+		else if(additionalTime != null && c.getTime().overlaps(additionalTime)) return true;
+		else if(c.getAdditionalTime() != null && c.getAdditionalTime().overlaps(time)) return true;
+		else if(c.getAdditionalTime() != null && additionalTime != null && c.getAdditionalTime().overlaps(additionalTime)) return true;
+		return false;
+	}
 
 	public String getName() {
 		return name;
