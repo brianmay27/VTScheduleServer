@@ -87,7 +87,9 @@ public class Course implements Serializable {
 	}
 	
 	public boolean overlaps(Course c) {
-		if(c.getTime().overlaps(time)) return true;
+		if(c.getType().startsWith("O") || type.startsWith("O")) return false; // Online class
+		else if(c.getTime() == null || time == null) return true; // TODO change what happens if times are null and NOT online
+		else if(c.getTime().overlaps(time)) return true;
 		else if(additionalTime != null && c.getTime().overlaps(additionalTime)) return true;
 		else if(c.getAdditionalTime() != null && c.getAdditionalTime().overlaps(time)) return true;
 		else if(c.getAdditionalTime() != null && additionalTime != null && c.getAdditionalTime().overlaps(additionalTime)) return true;

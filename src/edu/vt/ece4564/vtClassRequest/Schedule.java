@@ -15,7 +15,7 @@ public class Schedule {
 	/***
 	 * addCourse()
 	 * 
-	 * Adds a course to the schedule if there are no time conflicts and the course is different.
+	 * Adds a course to the schedule if there are no time/course conflicts.
 	 * 
 	 * @param c
 	 * @return true if successful, false if there are time/course conflicts

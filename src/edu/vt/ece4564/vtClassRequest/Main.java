@@ -35,6 +35,7 @@ public class Main extends HttpServlet
 {
     protected HashMap<String, Student> users;
     protected static SqlConnection sqlC = new SqlConnection();
+    
     public Main(char[] user, char[] password) {
         try
         {
@@ -63,6 +64,7 @@ public class Main extends HttpServlet
             e.printStackTrace();
         }
     }
+    
     public static void main(String[] args) throws Exception {
         /*try
         {
