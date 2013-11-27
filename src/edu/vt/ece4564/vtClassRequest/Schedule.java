@@ -12,10 +12,22 @@ public class Schedule {
 		courses = new ArrayList<Course>();
 	}
 	
+	/***
+	 * addCourse()
+	 * 
+	 * Adds a course to the schedule if there are no time conflicts and the course is different.
+	 * 
+	 * @param c
+	 * @return true if successful, false if there are time/course conflicts
+	 */
 	public boolean addCourse(Course c) {
-		for(Course cur : courses) { // Checks to make sure there are no time conflicts
+		// Checks to make sure there are no time conflicts and they are different courses
+		for(Course cur : courses) {
 			if(cur.overlaps(c)) return false;
+			else if(cur.getSubj().equalsIgnoreCase(c.getSubj()) && cur.getCrse().equalsIgnoreCase(c.getCrse())) return false;
 		}
+		
+		// Adds course
 		courses.add(c);
 		totalCredits += c.getCredits();
 		return true;
