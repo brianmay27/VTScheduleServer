@@ -18,18 +18,25 @@ public class Scheduler {
 	public static ArrayList<Schedule> makeSchedules(int minCredits, int maxCredits, ArrayList<Course> courses) {
 		// Add every combination of courses
 		ArrayList<Schedule> schedules = new ArrayList<Schedule>();
-		for(int j = 0; j < courses.size(); ++j) {
-			Schedule schedule = new Schedule();
-			for(int i = j; i < courses.size(); ++i) {
-				if(schedule.getTotalNumberOfCredits() >= maxCredits) break; // Break from unnecessary loop
-				else if(schedule.addCourse(courses.get(i))) {
-					// Add if within credit threshold
-					if(schedule.getTotalNumberOfCredits() >= minCredits && schedule.getTotalNumberOfCredits() <= maxCredits) {
-						schedules.add(schedule.clone());
-					}
+		addToSchedules(schedules,new Schedule(),0,minCredits,maxCredits,courses);
+		return schedules;
+	}
+	
+	private static void addToSchedules(ArrayList<Schedule> schedules, Schedule s, int pos, int minCredits, int maxCredits, ArrayList<Course> courses) {
+		if(s.getTotalNumberOfCredits() >= maxCredits) return;
+		
+		// Terminator
+		if(pos < courses.size()) {
+			// Call next function
+			addToSchedules(schedules,s.clone(),pos+1,minCredits,maxCredits,courses);
+			
+			// Add to schedules if it meets criteria
+			if(s.addCourse(courses.get(pos))) {
+				if(s.getTotalNumberOfCredits() >= minCredits && s.getTotalNumberOfCredits() <= maxCredits) {
+					schedules.add(s.clone());
 				}
+				addToSchedules(schedules,s.clone(),pos+1,minCredits,maxCredits,courses);
 			}
 		}
-		return schedules;
 	}
 }

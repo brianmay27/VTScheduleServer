@@ -58,7 +58,7 @@ public class Schedule {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Credits: " + this.totalCredits + "\n");
 		for(Course c : courses) {
-			sb.append(c.getSubj() + "-" + c.getCrse() + ": ");
+			sb.append(c.getCrn() + ": " + c.getSubj() + "-" + c.getCrse() + ": ");
 			if(c.getTime() != null) sb.append(c.getTime().toString());
 			if(c.getAdditionalTime() != null) sb.append(" & " + c.getAdditionalTime().toString());
 			sb.append("\n");

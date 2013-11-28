@@ -88,9 +88,6 @@ public class Main extends HttpServlet
 		courses.addAll(TimetableScraper.getCourses("ECE", "2504", "201401"));
 		courses.addAll(TimetableScraper.getCourses("ECE", "2534", "201401"));
 		courses.addAll(TimetableScraper.getCourses("ECE", "2704", "201401"));
-		courses.addAll(TimetableScraper.getCourses("ECE", "3106", "201401"));
-		courses.addAll(TimetableScraper.getCourses("ECE", "4124", "201401"));
-		courses.addAll(TimetableScraper.getCourses("ECE", "4514", "201401"));
 		System.out.println("Got all courses\n");
 		
 		// Return schedules between 12 and 19 credits
