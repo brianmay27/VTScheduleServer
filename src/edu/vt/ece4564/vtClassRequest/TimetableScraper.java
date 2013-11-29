@@ -29,7 +29,6 @@ public class TimetableScraper {
 	public static ArrayList<Course> getCourses(String subj, String crse, String termyear) {
 
 		ArrayList<Course> courses = new ArrayList<Course>();
-
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("CAMPUS", "0");
 		data.put("TERMYEAR", termyear);
@@ -73,7 +72,6 @@ public class TimetableScraper {
 				String start = info.get(8).text().trim();
 				String end = info.get(9).text().trim();
 				String location = info.get(10).text().trim();
-
 				// Set info
 				c.setCrn(crn);
 				c.setSubj(subj);

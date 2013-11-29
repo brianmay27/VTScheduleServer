@@ -3,7 +3,7 @@ package edu.vt.ece4564.vtClassRequest;
 import java.io.Serializable;
 
 public class Course implements Serializable {
-	
+
 	private static final long serialVersionUID = 8026434170877104021L;
 
 	private String name;
@@ -20,7 +20,7 @@ public class Course implements Serializable {
 	private int credits;
 	private int id;
 	private String type;
-	
+
 	public Course() {
 		// Initialize unnecessary stuff
 		this.name = null;
@@ -36,11 +36,11 @@ public class Course implements Serializable {
 		this.prereqs = null;
 		this.classRestrictions = null;
 	}
-	
+
 	public Course(String subj, String crse) {
 		this.subj = subj;
 		this.crse = crse;
-		
+
 		// Initialize unnecessary stuff
 		this.name = null;
 		this.credits = -1;
@@ -52,13 +52,13 @@ public class Course implements Serializable {
 		this.prereqs = null;
 		this.classRestrictions = null;
 	}
-	
+
 	public Course(String name, String subj, String crse, int credits) {
 		this.name = name;
 		this.subj = subj;
 		this.crse = crse;
 		this.credits = credits;
-		
+
 		// Initialize unnecessary stuff
 		this.crn = null;
 		this.location = null;
@@ -68,7 +68,7 @@ public class Course implements Serializable {
 		this.prereqs = null;
 		this.classRestrictions = null;
 	}
-	
+
 	public Course(String name, String subj, String crse, String crn, int credits, CourseTime time) {
 		this.name = name;
 		this.subj = subj;
@@ -76,7 +76,7 @@ public class Course implements Serializable {
 		this.crn = crn;
 		this.credits = credits;
 		this.time = time;
-		
+
 		// Initialize unnecessary stuff
 		this.location = null;
 		this.additionalTime = null;
@@ -84,6 +84,16 @@ public class Course implements Serializable {
 		this.instructor = null;
 		this.prereqs = null;
 		this.classRestrictions = null;
+	}
+
+	public boolean overlaps(Course c) {
+		if(c.getType().startsWith("O") || type.startsWith("O")) return false; // Online class
+		else if(c.getTime() == null || time == null) return true; // TODO change what happens if times are null and NOT online
+		else if(c.getTime().overlaps(time)) return true;
+		else if(additionalTime != null && c.getTime().overlaps(additionalTime)) return true;
+		else if(c.getAdditionalTime() != null && c.getAdditionalTime().overlaps(time)) return true;
+		else if(c.getAdditionalTime() != null && additionalTime != null && c.getAdditionalTime().overlaps(additionalTime)) return true;
+		return false;
 	}
 
 	public String getName() {
@@ -157,7 +167,7 @@ public class Course implements Serializable {
 	public void setAdditionalLocation(String additionalLocation) {
 		this.additionalLocation = additionalLocation;
 	}
-	
+
 	public String getCrse() {
 		return crse;
 	}
@@ -202,12 +212,12 @@ public class Course implements Serializable {
 		StringBuilder sb = new StringBuilder("Course: " + name + "\n" +
 											 subj + "-" + crse + "\n" +
 											 "CRN: " + crn + "\n");
-		
+
 		if(type != null && !type.startsWith("O")) {
 			if(time != null) {
 				sb.append(time.toString() + "\n");
 			}
-			
+
 			if(additionalTime != null) {
 				sb.append("Additional Times:" + additionalTime.toString() + "\n");
 			}
@@ -215,14 +225,14 @@ public class Course implements Serializable {
 		else if(type != null) {
 			sb.append("Online class\n");
 		}
-		
+
 		if(location != null) {
 			sb.append("Location: " + location + "\n");
 		}
-		
+
 		sb.append("Instructor: " + instructor + "\n" +
 				  "Credits: " + credits);
-		
+
 		return sb.toString();
 	}
 }

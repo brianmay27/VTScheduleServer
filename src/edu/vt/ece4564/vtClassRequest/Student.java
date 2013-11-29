@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Student extends Persistable implements Serializable{
+public class Student extends Persistable implements Serializable {
 
 	private Map<String,String> courseHistory;
 	private String pid;
