@@ -1,5 +1,9 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import java.io.OutputStreamWriter;
+import java.io.BufferedWriter;
+import java.io.OutputStream;
+import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +28,7 @@ public class UserRequest extends HttpServlet
         int minCredit = Integer.valueOf(request.getParameter("min"));
         int maxCredit = Integer.valueOf(request.getParameter("max"));
         String major = request.getParameter("major");
+        System.out.println("Got a request");
         try
         {
             Student student = Main.sqlC.getStudent(username);
@@ -34,6 +39,17 @@ public class UserRequest extends HttpServlet
                     //Password is bad
                 }
             }
+            try
+            {
+                getDARS dars = new getDARS(student, username.toCharArray(), password);
+                Thread thread = new Thread(dars);
+                thread.run();
+            }
+            catch (LoginException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         catch (SQLException e)
         {
@@ -41,7 +57,7 @@ public class UserRequest extends HttpServlet
             e.printStackTrace();
         }
     }
-    protected void doGet(HttpServletRequest request, HttpServletResponse responce) throws IOException {
-
-    }
+//    protected void doGet(HttpServletRequest request, HttpServletResponse responce) throws IOException {
+//        responce.getWriter().write("test");
+//    }
 }

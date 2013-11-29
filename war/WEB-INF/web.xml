@@ -8,6 +8,14 @@
 	    <servlet-name>api</servlet-name>
 	    <servlet-class>edu.vt.ece4564.vtClassRequest.UserRequest</servlet-class>
 	</servlet>
+	   <servlet>
+        <servlet-name>home</servlet-name>
+        <servlet-class>edu.vt.ece4564.vtClassRequest.Home</servlet-class>
+    </servlet>
+	<servlet-mapping>
+        <servlet-name>home</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 	<servlet-mapping>
         <servlet-name>api</servlet-name>
         <url-pattern>/api</url-pattern>

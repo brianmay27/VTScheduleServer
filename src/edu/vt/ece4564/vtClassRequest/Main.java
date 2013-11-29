@@ -65,17 +65,17 @@ public class Main extends HttpServlet
     public static void main(String[] args) throws Exception {
         try
         {
-            Main m = new Main(args[0].toCharArray(), args[1].toCharArray());
+            //Main m = new Main(args[0].toCharArray(), args[1].toCharArray());
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        Server server = new Server(8081);
-//        WebAppContext content = new WebAppContext();
-//        content.setWar("war");
-//        content.setContextPath("/");
-//        server.setHandler(content);
-//        server.start();
-//        server.join();
+        Server server = new Server(8081);
+        WebAppContext content = new WebAppContext();
+        content.setWar("war");
+        content.setContextPath("/");
+        server.setHandler(content);
+        server.start();
+        server.join();
     }
 
 }
