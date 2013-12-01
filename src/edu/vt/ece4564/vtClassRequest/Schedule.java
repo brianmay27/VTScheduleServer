@@ -1,11 +1,13 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Schedule {
+public class Schedule implements Serializable{
 
 	private ArrayList<Course> courses;
 	private int totalCredits;
+	private int hashID;
 
 	public Schedule() {
 		totalCredits = 0;

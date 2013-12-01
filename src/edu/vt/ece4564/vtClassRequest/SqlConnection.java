@@ -205,6 +205,11 @@ public class SqlConnection
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+        catch (SQLException e)
+        {
+            // TODO Auto-generated catch block
+            return null;
         } finally {
             result.close();
             stmt.close();

@@ -44,14 +44,21 @@ public class getDARS implements Runnable
     private String idm;
     private String sess;
     private Student student;
+    private int min;
+    private int max;
     private boolean gotNewWhatIf = false;
-    public getDARS(Student student, char[] userName, char[] password) throws LoginException {
+    ArrayList<Schedule> schedules = null;
+    int id;
+    public getDARS(Student student, char[] userName, char[] password, int min, int max) throws LoginException {
         this.student = student;
         cas = new CASManager();
         cas.setCredentials(userName, password);
         cas.startSession();
+        id = Calendar.getInstance().hashCode() + String.copyValueOf(password).hashCode();
         idm = cas.getCookies().get("IDMSESSID");
         sess = cas.getCookies().get("SESSID");
+        this.max = max;
+        this.min = min;
     }
     @Override
     public void run()
@@ -69,16 +76,21 @@ public class getDARS implements Runnable
                 student.setClassesNeeded(dars);
             } if (student.getClassMap() == null) {
                 HashMap<String, ArrayList<Course>> ClassMap = new HashMap<>();
+                ArrayList<Course> coursesAll = new ArrayList<>();
                 for (String course : student.getClassesNeeded().arrayPreBrian) {
                     String[] split = course.split(" ");
                     ArrayList<Course> courses = TimetableScraper.getCourses(split[1].toUpperCase(), split[2], "201401");
+                    if (courses == null) continue;
+                    coursesAll.addAll(courses);
                     ClassMap.put(split[1] + " " +split[2], courses);
-                    System.out.println(split[1] + " " + split[2]);
+                    //System.out.println(split[1] + " " + split[2]);
                     for (Course timeCourse: courses) {
                         System.out.println("  : " + timeCourse.toString());
                     }
                 }
                 student.setClassMap(ClassMap);
+                schedules = Scheduler.makeSchedules(min, max, coursesAll);
+                student.setSchedules(schedules, id);
             }
             //TODO sort stuff;
         }
@@ -162,9 +174,10 @@ public class getDARS implements Runnable
             conn.connect();
             String html = getHtml(conn);
             student.setLatestDars(html);
-            Main.sqlC.updateStudent(student);
+            //Main.sqlC.updateStudent(student);
             ParseDars dars = new ParseDars(html);
             student.setClassesNeeded(dars);
+            conn.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }

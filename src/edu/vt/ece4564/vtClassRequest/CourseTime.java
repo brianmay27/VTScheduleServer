@@ -1,9 +1,10 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CourseTime {
+public class CourseTime implements Serializable {
 
 	public static final int NULL_TIME = -1;
 

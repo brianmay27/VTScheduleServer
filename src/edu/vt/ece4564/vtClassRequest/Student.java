@@ -9,13 +9,27 @@ public class Student extends Persistable implements Serializable {
 
 	private Map<String,String> courseHistory;
 	private String pid;
-	private String passwordHash;
+	private int passwordHash;
 	private String major;
 	private String latestDars;
 	private ParseDars classesNeeded;
 	private HashMap<String, ArrayList<Course>> ClassMap;
+	private HashMap<Integer, ArrayList<Schedule>> schedules = null;
 
-	public HashMap<String, ArrayList<Course>> getClassMap()
+	public ArrayList<Schedule> getSchedules(int id)
+    {
+	    if (schedules == null) return null;
+        return schedules.get(id);
+    }
+
+    public synchronized void setSchedules(ArrayList<Schedule> schedules, int ID)
+    {
+        if (this.schedules == null) this.schedules = new HashMap<Integer, ArrayList<Schedule>>();
+        this.schedules.put(ID, schedules);
+        Persist(this);
+    }
+
+    public HashMap<String, ArrayList<Course>> getClassMap()
     {
         return ClassMap;
     }
@@ -31,7 +45,7 @@ public class Student extends Persistable implements Serializable {
         return classesNeeded;
     }
 
-    public void setClassesNeeded(ParseDars classesNeeded)
+    public synchronized void setClassesNeeded(ParseDars classesNeeded)
     {
         this.classesNeeded = classesNeeded;
         Persist(this);
@@ -42,7 +56,7 @@ public class Student extends Persistable implements Serializable {
         return latestDars;
     }
 
-    public void setLatestDars(String latestDars)
+    public synchronized void setLatestDars(String latestDars)
     {
         this.latestDars = latestDars;
         Persist(this);
@@ -52,18 +66,18 @@ public class Student extends Persistable implements Serializable {
         super();
 		courseHistory = new HashMap<String,String>();
 		pid = null;
-		passwordHash = null;
+		passwordHash = 0;
 		major = null;
 	}
 
-	public Student(String pid, String passwordHash, String major) {
+	public Student(String pid, int passwd, String major) {
 	    super();
 		this.pid = pid;
-		this.passwordHash = passwordHash;
+		this.passwordHash = passwd;
 		this.major = major;
 	}
 
-	public void addCourseToHistory(String course, String grade) {
+	public synchronized void addCourseToHistory(String course, String grade) {
 		courseHistory.put(course, grade);
 		Persist(this);
 	}
@@ -72,7 +86,7 @@ public class Student extends Persistable implements Serializable {
 		return courseHistory;
 	}
 
-	public void setCourseHistory(Map<String, String> courseHistory) {
+	public synchronized void setCourseHistory(Map<String, String> courseHistory) {
 		this.courseHistory = courseHistory;
 		Persist(this);
 	}
@@ -81,16 +95,16 @@ public class Student extends Persistable implements Serializable {
 		return pid;
 	}
 
-	public void setPid(String pid) {
+	public synchronized void setPid(String pid) {
 		this.pid = pid;
 		Persist(this);
 	}
 
-	public String getPasswordHash() {
+	public int getPasswordHash() {
 		return passwordHash;
 	}
 
-	public void setPasswordHash(String passwordHash) {
+	public synchronized void setPasswordHash(int passwordHash) {
 		this.passwordHash = passwordHash;
 		Persist(this);
 	}
@@ -99,7 +113,7 @@ public class Student extends Persistable implements Serializable {
 		return major;
 	}
 
-	public void setMajor(String major) {
+	public synchronized void setMajor(String major) {
 		this.major = major;
 		Persist(this);
 	}
