@@ -74,24 +74,23 @@ public class getDARS implements Runnable
             else if (student.getClassesNeeded() == null) {
                 ParseDars dars = new ParseDars(student.getLatestDars());
                 student.setClassesNeeded(dars);
-            } if (student.getClassMap() == null) {
-                HashMap<String, ArrayList<Course>> ClassMap = new HashMap<>();
+            }
+                ArrayList<Course> ClassMap = new ArrayList<>();
                 ArrayList<Course> coursesAll = new ArrayList<>();
                 for (String course : student.getClassesNeeded().arrayPreBrian) {
                     String[] split = course.split(" ");
                     ArrayList<Course> courses = TimetableScraper.getCourses(split[1].toUpperCase(), split[2], "201401");
                     if (courses == null) continue;
                     coursesAll.addAll(courses);
-                    ClassMap.put(split[1] + " " +split[2], courses);
                     //System.out.println(split[1] + " " + split[2]);
                     for (Course timeCourse: courses) {
                         System.out.println("  : " + timeCourse.toString());
                     }
-                }
-                student.setClassMap(ClassMap);
-                schedules = Scheduler.makeSchedules(min, max, coursesAll);
-                student.setSchedules(schedules, id);
             }
+                ArrayList<Course> removedNN = removeClassesWOPre(coursesAll, student.getClassesNeeded().arrayTakenCourse);
+                schedules = Scheduler.makeSchedules(min, max, removedNN);
+                student.setSchedules(schedules, id);
+                System.out.println("Done processing");
             //TODO sort stuff;
         }
         catch (Exception e)
@@ -100,6 +99,22 @@ public class getDARS implements Runnable
             e.printStackTrace();
         }
 
+    }
+    protected ArrayList<Course> removeClassesWOPre(ArrayList<Course> needed, ArrayList<Course> taken) {
+        ArrayList<Course> ret = new ArrayList<>();
+        for (Course course : needed) {
+            boolean allContained = true;
+            if (course.getPrereqs() != null) {
+                for (Course prerec : course.getPrereqs()) {
+                    if (!taken.contains(prerec)) {
+                        allContained = false;
+                        break;
+                    }
+                }
+            }
+            if (allContained) ret.add(course);
+        }
+        return ret;
     }
     protected void requestWhatIf(String SessionId, String IdmSession, String Major) throws Exception {
         HttpsURLConnection conn = (HttpsURLConnection)new URL(runWhatIf).openConnection();
@@ -134,7 +149,7 @@ public class getDARS implements Runnable
                 conn.setRequestProperty("Referer", "https://banweb.banner.vt.edu/ssb/prod/twbkwbis.P_GenMenu?name=bmenu.P_DarsMnu");
                 conn.connect();
                 String url = getHtml(conn);
-                String[] dars = url.split("<a STYLE=\"text-decoration: none\" onMouseOver='window.status=\"View Audit Results\";return true'onMouseOut='window.status=\"Done\";return true'");
+                String[] dars = url.split("<TR ALIGN=\"DEFAULT\">");
                 if (dars.length <= 1)
                     return;
                 Pattern darUrlPattern = Pattern.compile(".*href=\"JavaScript:mywindowOpen\\('(https://webapps.banner.vt.edu/dars/bar\\?jobQSeqNo=\\d+&job_id=[^']+)'\\)\">BACHELOR OF SCIENCE IN COMPUTER ENGINEERING</a>.*");

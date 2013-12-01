@@ -235,4 +235,12 @@ public class Course implements Serializable {
 
 		return sb.toString();
 	}
+	@Override
+	public boolean equals(Object other) {
+	    if (other instanceof Course) {
+	        Course o = (Course) other;
+	        if (o.getSubj().equals(this.subj) && o.getCrse().equals(this.crse)) return true;
+	    }
+	    return false;
+	}
 }

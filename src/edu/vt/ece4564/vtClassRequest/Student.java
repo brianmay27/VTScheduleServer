@@ -13,7 +13,6 @@ public class Student extends Persistable implements Serializable {
 	private String major;
 	private String latestDars;
 	private ParseDars classesNeeded;
-	private HashMap<String, ArrayList<Course>> ClassMap;
 	private HashMap<Integer, ArrayList<Schedule>> schedules = null;
 
 	public ArrayList<Schedule> getSchedules(int id)
@@ -26,17 +25,6 @@ public class Student extends Persistable implements Serializable {
     {
         if (this.schedules == null) this.schedules = new HashMap<Integer, ArrayList<Schedule>>();
         this.schedules.put(ID, schedules);
-        Persist(this);
-    }
-
-    public HashMap<String, ArrayList<Course>> getClassMap()
-    {
-        return ClassMap;
-    }
-
-    public void setClassMap(HashMap<String, ArrayList<Course>> classMap)
-    {
-        ClassMap = classMap;
         Persist(this);
     }
 

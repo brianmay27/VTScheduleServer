@@ -27,12 +27,11 @@ public class ParseDars implements Serializable
     ArrayList<ArrayList<String>> arrayCourseRefined = new ArrayList<ArrayList<String>>();
 
     ArrayList<String> arrayPreBrian = new ArrayList<String>();
-    ArrayList<String> arrayTakenCourse = new ArrayList<String>();
+    ArrayList<Course> arrayTakenCourse = new ArrayList<>();
     String html, tempStorage;
     int maxID;
     boolean switcher;
     ArrayList<RequirementsStruct> arrayRequirments = new ArrayList<RequirementsStruct>();
-
     public ParseDars(String html) {
         this.html = html;
 
@@ -171,14 +170,18 @@ public class ParseDars implements Serializable
             retval.getChars(5, 18, temp, 0);
             if(Character.isDigit(temp[12])){
                 if(temp[12]!='0'){
-                    arrayTakenCourse.add(String.copyValueOf(temp));
+                    String[] course = String.copyValueOf(temp).split("\\s+");
+                    if (course.length < 3) continue;
+                    arrayTakenCourse.add(new Course(course[0], course[1]));
                 }
             }
             if(retval.length()>48){
             retval.getChars(35, 48, temp, 0);
             if(Character.isDigit(temp[12])){
                 if(temp[12]!='0'){
-                    arrayTakenCourse.add(String.copyValueOf(temp));
+                    String[] course = String.copyValueOf(temp).split("\\s+");
+                    if (course.length < 3) continue;
+                    arrayTakenCourse.add(new Course(course[0], course[1]));
                 }
             }
             }

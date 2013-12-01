@@ -35,7 +35,7 @@ public class UserRequest extends HttpServlet
         if (mode.equals("request")) {
             String username = request.getParameter("username");
             String encryptedPasswd = request.getParameter("passwd");
-            char[] password = encryptedPasswd.toCharArray();//encrypter.decrypt(encryptedPasswd).toCharArray();
+            char[] password = encrypter.decrypt(encryptedPasswd).toCharArray();
             int minCredit = Integer.valueOf(request.getParameter("min"));
             int maxCredit = Integer.valueOf(request.getParameter("max"));
             String major = request.getParameter("major");
@@ -53,8 +53,10 @@ public class UserRequest extends HttpServlet
                 try
                 {
                     getDARS dars = new getDARS(student, username.toCharArray(), password, minCredit, maxCredit);
-                    responce.getWriter().write(String.valueOf(dars.id));
+                    responce.setStatus(HttpServletResponse.SC_OK);
+                    responce.getWriter().write(String.valueOf(dars.id) +"\r");
                     responce.flushBuffer();
+                    responce.getWriter().close();
                     System.out.println(dars.id);
                     Thread thread = new Thread(dars);
                     thread.run();
@@ -73,7 +75,7 @@ public class UserRequest extends HttpServlet
         } else if (mode.equals("grab")) {
             String username = request.getParameter("username");
             String encryptedPasswd = request.getParameter("passwd");
-            char[] password = encryptedPasswd.toCharArray(); //encrypter.decrypt(encryptedPasswd).toCharArray();
+            char[] password = encrypter.decrypt(encryptedPasswd).toCharArray();
             int id = Integer.valueOf(request.getParameter("id"));
             int section = Integer.valueOf(request.getParameter("loc"));
             try
@@ -95,8 +97,8 @@ public class UserRequest extends HttpServlet
                 {
                     // return null or something
                 }
-                List<Schedule> retVal =
-                    schedule.subList(section * 5, (section * 5) + 4);
+                ArrayList<Schedule> retVal =
+                    new ArrayList<>(schedule.subList(section * 5, (section * 5) + 4));
                 BufferedWriter writter =
                     new BufferedWriter(new OutputStreamWriter(
                         responce.getOutputStream()));

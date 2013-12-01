@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServlet;
 public class Main extends HttpServlet
 {
     protected HashMap<String, Student> users;
-    protected static SqlConnection sqlC = new SqlConnection();
+    protected static final SqlConnection sqlC = new SqlConnection();
 
     public Main(char[] user, char[] password) {
         try
