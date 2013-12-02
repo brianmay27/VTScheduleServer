@@ -14,17 +14,17 @@ public class Student extends Persistable implements Serializable {
 	private String major;
 	private String latestDars;
 	private ParseDars classesNeeded;
-	private HashMap<Integer, ArrayList<Schedule>> schedules = null;
+	private HashMap<Long, ArrayList<Schedule>> schedules = null;
 
-	public ArrayList<Schedule> getSchedules(int id)
+	public ArrayList<Schedule> getSchedules(long id)
     {
 	    if (schedules == null) return null;
         return schedules.get(id);
     }
 
-    public synchronized void setSchedules(ArrayList<Schedule> schedules, int ID)
+    public synchronized void putSchedules(ArrayList<Schedule> schedules, long ID)
     {
-        if (this.schedules == null) this.schedules = new HashMap<Integer, ArrayList<Schedule>>();
+        if (this.schedules == null) this.schedules = new HashMap<Long, ArrayList<Schedule>>();
         this.schedules.put(ID, schedules);
         Persist(this);
     }

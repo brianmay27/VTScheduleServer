@@ -90,22 +90,21 @@ public class UserRequest extends HttpServlet
                     }
                 }
                 ArrayList<Schedule> schedule = student.getSchedules(id);
-                if (schedule == null)
+                byte[] data = null;
+                if (schedule != null)
                 {
                     // return null or something
-                }
-                ArrayList<Schedule> retVal =
-                    new ArrayList<>(schedule.subList(section * 5, (section * 5) + 4));
-                byte[] data = null;
-                try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    ObjectOutput out = new ObjectOutputStream(bos))
-                {
-                    out.writeObject(retVal);
-                    data = bos.toByteArray();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
+                    ArrayList<Schedule> retVal = new ArrayList<>(schedule.subList(section * 5, (section * 5) + 4));
+                        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                            ObjectOutput out = new ObjectOutputStream(bos))
+                            {
+                            out.writeObject(retVal);
+                            data = bos.toByteArray();
+                            }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
                 }
                 responce.getOutputStream().write(data);
                 responce.getOutputStream().flush();
@@ -116,6 +115,20 @@ public class UserRequest extends HttpServlet
             catch (SQLException e)
             {
                 // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else if (mode.equals("process")) {
+            String username = request.getParameter("username");
+            String ID = request.getParameter("id");
+            try {
+                Student student = Main.sqlC.getStudent(username);
+                if (student == null) {
+                    responce.sendError(HttpServletResponse.SC_NO_CONTENT);
+                    return;
+                }
+                if (student.getSchedules(Long.valueOf(ID)) != null) responce.getWriter().write("Success");
+                else responce.getWriter().write("Working");
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

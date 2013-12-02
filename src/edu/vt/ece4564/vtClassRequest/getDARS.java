@@ -1,5 +1,7 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import org.apache.http.auth.InvalidCredentialsException;
+import javax.servlet.http.HttpServletResponse;
 import edu.vt.ece4564.shared.Course;
 import edu.vt.ece4564.shared.Schedule;
 import java.io.BufferedReader;
@@ -45,13 +47,13 @@ public class getDARS implements Runnable
     private int max;
     private boolean gotNewWhatIf = false;
     ArrayList<Schedule> schedules = null;
-    int id;
+    long id;
     public getDARS(Student student, char[] userName, char[] password, int min, int max) throws LoginException {
         this.student = student;
         cas = new CASManager();
         cas.setCredentials(userName, password);
         cas.startSession();
-        id = Calendar.getInstance().hashCode() + String.copyValueOf(password).hashCode();
+        id = Calendar.getInstance().getTimeInMillis();
         idm = cas.getCookies().get("IDMSESSID");
         sess = cas.getCookies().get("SESSID");
         this.max = max;
@@ -86,14 +88,17 @@ public class getDARS implements Runnable
             }
                 ArrayList<Course> removedNN = removeClassesWOPre(coursesAll, student.getClassesNeeded().arrayTakenCourse);
                 schedules = Scheduler.makeSchedules(min, max, removedNN);
-                student.setSchedules(schedules, id);
+                student.putSchedules(schedules, id);
                 System.out.println("Done processing");
-            //TODO sort stuff;
         }
         catch (Exception e)
         {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            if (e instanceof InvalidCredentialsException) {
+
+            } else {
+                e.printStackTrace();
+            }
+
         }
 
     }
@@ -129,6 +134,7 @@ public class getDARS implements Runnable
         writter.flush();
         String responce = conn.getResponseMessage();
         conn.disconnect();
+        if (responce.equals(HttpServletResponse.SC_FORBIDDEN)) throw new InvalidCredentialsException("Invalid password");
         requestCheckDars.scheduleAtFixedRate(checkDars, 10000, 15000);
     }
     protected Timer requestCheckDars = new Timer();
