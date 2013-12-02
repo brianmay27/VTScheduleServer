@@ -73,7 +73,7 @@ public class UserRequest extends HttpServlet
             String username = request.getParameter("username");
             String encryptedPasswd = request.getParameter("passwd");
             char[] password = encrypter.decrypt(encryptedPasswd).toCharArray();
-            int id = Integer.valueOf(request.getParameter("id"));
+            long id = Long.valueOf(request.getParameter("id"));
             int section = Integer.valueOf(request.getParameter("loc"));
             try
             {
@@ -128,6 +128,8 @@ public class UserRequest extends HttpServlet
                 }
                 if (student.getSchedules(Long.valueOf(ID)) != null) responce.getWriter().write("Success");
                 else responce.getWriter().write("Working");
+                responce.getWriter().flush();
+                responce.getWriter().close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
