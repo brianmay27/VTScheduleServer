@@ -1,20 +1,17 @@
 package edu.vt.ece4564.vtClassRequest;
 
-import org.jasypt.util.text.BasicTextEncryptor;
+import edu.vt.ece4564.shared.Schedule;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.util.List;
-import java.util.ArrayList;
-import java.io.OutputStreamWriter;
-import java.io.BufferedWriter;
-import java.io.OutputStream;
-import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
-import java.io.IOException;
+import java.util.ArrayList;
+import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
+import org.jasypt.util.text.BasicTextEncryptor;
 
 // -------------------------------------------------------------------------
 /**
@@ -99,23 +96,21 @@ public class UserRequest extends HttpServlet
                 }
                 ArrayList<Schedule> retVal =
                     new ArrayList<>(schedule.subList(section * 5, (section * 5) + 4));
-                BufferedWriter writter =
-                    new BufferedWriter(new OutputStreamWriter(
-                        responce.getOutputStream()));
-                String data = "";
+                byte[] data = null;
                 try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     ObjectOutput out = new ObjectOutputStream(bos))
                 {
                     out.writeObject(retVal);
-                    data = bos.toString();
+                    data = bos.toByteArray();
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
                 }
-                writter.write(data);
-                writter.flush();
-                writter.close();
+                responce.getOutputStream().write(data);
+                responce.getOutputStream().flush();
+                responce.getOutputStream().close();
+
 
             }
             catch (SQLException e)

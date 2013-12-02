@@ -1,7 +1,8 @@
 package edu.vt.ece4564.vtClassRequest;
 
-import java.util.ArrayList;
+import edu.vt.ece4564.shared.Schedule;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 

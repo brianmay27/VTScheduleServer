@@ -1,11 +1,13 @@
-package edu.vt.ece4564.vtClassRequest;
+package edu.vt.ece4564.shared;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Schedule implements Serializable{
 
-	private ArrayList<Course> courses;
+    //private static final long serialVersionUID  = 0x98F22BF5;
+    private ArrayList<Course> courses;
 	private int totalCredits;
 	private int hashID;
 

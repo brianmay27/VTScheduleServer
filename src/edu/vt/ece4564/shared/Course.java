@@ -1,4 +1,5 @@
-package edu.vt.ece4564.vtClassRequest;
+package edu.vt.ece4564.shared;
+
 
 import java.io.Serializable;
 

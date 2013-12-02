@@ -1,8 +1,9 @@
 package edu.vt.ece4564.vtClassRequest;
 
-import java.io.Serializable;
+import edu.vt.ece4564.shared.Course;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 // -------------------------------------------------------------------------

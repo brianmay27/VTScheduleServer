@@ -1,10 +1,11 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import edu.vt.ece4564.shared.Course;
+import edu.vt.ece4564.shared.CourseTime;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
