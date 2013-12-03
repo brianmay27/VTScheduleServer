@@ -154,7 +154,7 @@ public class CourseTime implements Serializable {
 	private int getMinutes(String time) throws Exception {
 		int t = 60*(Integer.parseInt(time.substring(0,time.indexOf(':'))));
 		t += (Integer.parseInt(time.substring(time.indexOf(':') + 1,time.indexOf(':') + 3)));
-		if(time.contains("PM")) t += 60*12;
+		if(time.contains("PM") && Integer.parseInt(time.substring(0,time.indexOf(':'))) != 12) t += 60*12;
 		return t;
 	}
 

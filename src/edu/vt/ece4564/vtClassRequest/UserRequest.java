@@ -49,7 +49,7 @@ public class UserRequest extends HttpServlet
                 }
                 try
                 {
-                    getDARS dars = new getDARS(student, username.toCharArray(), password, minCredit, maxCredit);
+                    getDARS dars = new getDARS(student, username.toCharArray(), password, minCredit, maxCredit, major);
                     responce.setStatus(HttpServletResponse.SC_OK);
                     responce.getWriter().write(String.valueOf(dars.id) +"\r");
                     responce.flushBuffer();
@@ -98,7 +98,7 @@ public class UserRequest extends HttpServlet
                         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                             ObjectOutput out = new ObjectOutputStream(bos))
                             {
-                            out.writeObject(retVal);
+                            out.writeObject(schedule);
                             data = bos.toByteArray();
                             }
                         catch (Exception e)
@@ -138,42 +138,5 @@ public class UserRequest extends HttpServlet
     protected void doPost(HttpServletRequest request, HttpServletResponse responce) throws IOException {
 
     }
-//    protected void doGet(HttpServletRequest request, HttpServletResponse responce) throws IOException {
-//        String username = request.getParameter("username");
-//        char[] password = request.getParameter("passwd").toCharArray();
-//        int id = Integer.valueOf(request.getParameter("id"));
-//        int section = Integer.valueOf(request.getParameter("loc"));
-//        try {
-//            Student student = Main.sqlC.getStudent(username);
-//            if (student == null) {
-//                //do something like return nothing or null or yeah
-//            } else {
-//                if (student.getPasswordHash() != password.hashCode()) {
-//                    //Password is bad
-//                }
-//            }
-//            ArrayList<Schedule> schedule = student.getSchedules(id);
-//            if (schedule == null) {
-//                //return null or something
-//            }
-//            List<Schedule> retVal = schedule.subList(section * 5, (section * 5) + 4);
-//            BufferedWriter writter = new BufferedWriter(new OutputStreamWriter(responce.getOutputStream()));
-//            String data = "";
-//            try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); ObjectOutput out = new ObjectOutputStream(bos)) {
-//                out.writeObject(retVal);
-//                data = bos.toString();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            writter.write(data);
-//            writter.flush();
-//            writter.close();
-//
-//        }
-//        catch (SQLException e)
-//        {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//    }
+
 }

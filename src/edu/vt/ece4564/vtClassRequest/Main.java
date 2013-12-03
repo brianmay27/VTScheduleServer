@@ -36,34 +36,34 @@ public class Main extends HttpServlet
     protected HashMap<String, Student> users;
     protected static final SqlConnection sqlC = new SqlConnection();
 
-    public Main(char[] user, char[] password) {
-        try
-        {
-            Student student = new Student("bmac", "shxn".hashCode(), "BSCPECPE");
-            try
-            {
-                sqlC.addStudent(student);
-                student = sqlC.getStudent("bmac");
-
-            }
-            catch (SQLException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            if (student != null) {
-                getDARS dars = new getDARS(student, user, password, 12, 16);
-                Thread thead = new Thread(dars);
-                thead.run();
-            }
-
-        }
-        catch (LoginException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+//    public Main(char[] user, char[] password) {
+//        try
+//        {
+//            Student student = new Student("bmac", "shxn".hashCode(), "BSCPECPE");
+//            try
+//            {
+//                sqlC.addStudent(student);
+//                student = sqlC.getStudent("bmac");
+//
+//            }
+//            catch (SQLException e)
+//            {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//            if (student != null) {
+//                getDARS dars = new getDARS(student, user, password, 12, 16);
+//                Thread thead = new Thread(dars);
+//                thead.run();
+//            }
+//
+//        }
+//        catch (LoginException e)
+//        {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//    }
 
     public static void main(String[] args) throws Exception {
        try
@@ -79,19 +79,6 @@ public class Main extends HttpServlet
         server.setHandler(content);
         server.start();
         server.join();
-
-
-    	// Add courses
-    	/*ArrayList<Course> courses = TimetableScraper.getCourses("ECE", "1574", "201401");
-		courses.addAll(TimetableScraper.getCourses("ECE", "2014", "201401"));
-		courses.addAll(TimetableScraper.getCourses("ECE", "2054", "201401"));
-		courses.addAll(TimetableScraper.getCourses("ECE", "2504", "201401"));
-		courses.addAll(TimetableScraper.getCourses("ECE", "2534", "201401"));
-		courses.addAll(TimetableScraper.getCourses("ECE", "2704", "201401"));
-		System.out.println("Got all courses\n");
-
-		// Return schedules between 12 and 19 credits
-		ArrayList<Schedule> schedules = Scheduler.makeSchedules(12, 19, courses);*/
 
     }
 

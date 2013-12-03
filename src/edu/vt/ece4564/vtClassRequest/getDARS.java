@@ -43,12 +43,13 @@ public class getDARS implements Runnable
     private String idm;
     private String sess;
     private Student student;
+    private String major;
     private int min;
     private int max;
     private boolean gotNewWhatIf = false;
     ArrayList<Schedule> schedules = null;
     long id;
-    public getDARS(Student student, char[] userName, char[] password, int min, int max) throws LoginException {
+    public getDARS(Student student, char[] userName, char[] password, int min, int max, String major) throws LoginException {
         this.student = student;
         cas = new CASManager();
         cas.setCredentials(userName, password);
@@ -58,6 +59,7 @@ public class getDARS implements Runnable
         sess = cas.getCookies().get("SESSID");
         this.max = max;
         this.min = min;
+        this.major = major;
     }
     @Override
     public void run()
@@ -65,7 +67,7 @@ public class getDARS implements Runnable
         try
         {
             if (student.getLatestDars() == null) {
-                requestWhatIf(sess, idm, "BSCPECPE");
+                requestWhatIf(sess, idm, major);
                 while (!gotNewWhatIf) {
                     Thread.sleep(500);
                 }
@@ -106,7 +108,7 @@ public class getDARS implements Runnable
         ArrayList<Course> ret = new ArrayList<>();
         for (Course course : needed) {
             boolean allContained = true;
-            if (course.getPrereqs() != null) {
+            if (course.getPrereqs() != null && course.getPrereqs()[0] != null) {
                 for (Course prerec : course.getPrereqs()) {
                     if (!taken.contains(prerec)) {
                         allContained = false;
@@ -130,8 +132,10 @@ public class getDARS implements Runnable
         conn.connect();
         BufferedWriter writter = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
         //szvinst_ident=AAARvfAAhAAAAQDAAA&fdprog=BSCPECPE+++++++201009&use_planned=Y
-        writter.write("szvinst_ident=AAARvfAAhAAAAQDAAA&fdprog=" + Major + "+++++++201009&use_planned=Y");
+        for (int addPlus = 15 - Major.length(); addPlus > 0; addPlus--) Major += "+";
+        writter.write("szvinst_ident=AAARvfAAhAAAAQDAAA&fdprog=" + Major + "201009&use_planned=Y");
         writter.flush();
+        writter.close();
         String responce = conn.getResponseMessage();
         conn.disconnect();
         if (responce.equals(HttpServletResponse.SC_FORBIDDEN)) throw new InvalidCredentialsException("Invalid password");
@@ -155,7 +159,7 @@ public class getDARS implements Runnable
                 String[] dars = url.split("<TR ALIGN=\"DEFAULT\">");
                 if (dars.length <= 1)
                     return;
-                Pattern darUrlPattern = Pattern.compile(".*href=\"JavaScript:mywindowOpen\\('(https://webapps.banner.vt.edu/dars/bar\\?jobQSeqNo=\\d+&job_id=[^']+)'\\)\">BACHELOR OF SCIENCE IN COMPUTER ENGINEERING</a>.*");
+                Pattern darUrlPattern = Pattern.compile(".*href=\"JavaScript:mywindowOpen\\('(https://webapps.banner.vt.edu/dars/bar\\?jobQSeqNo=\\d+&job_id=[^']+)'\\)\">.*");
                 Matcher darsUrlmatcher = darUrlPattern.matcher(dars[1]);
                 Pattern darsDatePattern = Pattern.compile(".*<TD width=\"20%\" CLASS=\"dedefault\">(\\w{3} \\d{1,2}, \\d{4}) \\d{1,2}:\\d{2}\\w{2}</TD>.*");
                 Matcher darsDateMatcher = darsDatePattern.matcher(dars[1]);
