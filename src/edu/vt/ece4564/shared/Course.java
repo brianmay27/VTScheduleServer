@@ -1,6 +1,7 @@
 package edu.vt.ece4564.shared;
 
 
+import java.util.ArrayList;
 import java.io.Serializable;
 
 public class Course implements Serializable {
@@ -16,7 +17,7 @@ public class Course implements Serializable {
 	private CourseTime additionalTime;
 	private String additionalLocation;
 	private String instructor;
-	private Course prereqs[];
+	private ArrayList<ArrayList<Course>> prereqs;
 	private String classRestrictions;
 	private int credits;
 	private int id;
@@ -153,11 +154,11 @@ public class Course implements Serializable {
 		this.credits = credits;
 	}
 
-	public Course[] getPrereqs() {
+	public ArrayList<ArrayList<Course>> getPrereqs() {
 		return prereqs;
 	}
 
-	public void setPrereqs(Course prereqs[]) {
+	public void setPrereqs(ArrayList<ArrayList<Course>> prereqs) {
 		this.prereqs = prereqs;
 	}
 

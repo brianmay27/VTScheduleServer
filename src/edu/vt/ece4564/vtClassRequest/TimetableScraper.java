@@ -1,5 +1,7 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import edu.vt.ece4564.shared.Course;
 import edu.vt.ece4564.shared.CourseTime;
 import java.io.IOException;
@@ -11,12 +13,23 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class TimetableScraper {
+public class TimetableScraper implements Runnable{
 
 	private static final String TIMETABLE_URL = "https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC.P_ProcRequest";
 	private static final String COURSE_URL = "https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC.P_ProcComments";
 	private static final String USER_AGENTS = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) Gecko/20100101 Firefox/11.0";
-
+	private String subj;
+	private String crse;
+	private String year;
+	private ArrayList<Course> courses = null;
+	public TimetableScraper(String subj, String crse, String termyear) {
+	    this.crse = crse;
+	    this.subj = subj;
+	    this.year = termyear;
+	}
+	public ArrayList<Course> getCourses() {
+	    return courses;
+	}
 	/***
 	 * getCourses()
 	 *
@@ -27,7 +40,7 @@ public class TimetableScraper {
 	 * @param termyear: Concatenation of year and term (spring=01,fall=09), ex. 201401
 	 * @return ArrayList of course objects
 	 */
-	public static ArrayList<Course> getCourses(String subj, String crse, String termyear) {
+	public ArrayList<Course> getCourses(String subj, String crse, String termyear) {
 
 		ArrayList<Course> courses = new ArrayList<Course>();
 		Map<String, String> data = new HashMap<String, String>();
@@ -99,9 +112,10 @@ public class TimetableScraper {
 				c.setLocation(location);
 
 				// Get Prereqs
-				Course[] prereqs = new Course[1];
+				ArrayList<ArrayList<Course>> prereqs;
 				try {
-					prereqs = getPrereqs(crn, termyear.substring(4), termyear.substring(0,4), subj, crse).toArray(prereqs);
+				    //TODO change this!
+					prereqs = getPrereqs(crn, termyear.substring(4), termyear.substring(0,4), subj, crse);
 					c.setPrereqs(prereqs);
 				} catch (Exception e) {
 					System.err.println("Error adding prereqs: " + e.getMessage() + ": " + crn);
@@ -136,8 +150,8 @@ public class TimetableScraper {
 	}
 
 	// Returns prereqs needed for a course
-	public static ArrayList<Course> getPrereqs(String crn, String term, String year, String subj, String crse) throws Exception {
-		ArrayList<Course> prereqs = new ArrayList<Course>();
+	public ArrayList<ArrayList<Course>> getPrereqs(String crn, String term, String year, String subj, String crse) throws Exception {
+		ArrayList<ArrayList<Course>> prereqs = new ArrayList<ArrayList<Course>>();
 
 		// Make url
 		String courseUrl = COURSE_URL + "?CRN=" + crn + "&TERM=" + term + "&YEAR=" + year +
@@ -148,13 +162,34 @@ public class TimetableScraper {
 
 		// Parse document
 		Elements prereqHtml = courseDoc.select("table.plaintable tr");
+		Pattern matchCourse = Pattern.compile("[a-zA-Z]{2,4} \\d{4}.*");
 		for(Element e : prereqHtml) {
-			if(e.toString().contains("Prerequisites")) {
-				Elements prereqLinks = e.getElementsByTag("td").get(1).getElementsByTag("a");
-				for(Element pe : prereqLinks) {
-					String prereqstr = pe.text();
-					Course temp = new Course(prereqstr.substring(0,prereqstr.indexOf(' ')), prereqstr.substring(prereqstr.indexOf(' ') + 1));
-					prereqs.add(temp);
+			if(e.toString().contains("Prerequisites:")) {
+				String[] prereqLinks = e.getElementsByTag("td").get(1).toString().split(",");
+				for(String pe : prereqLinks) {
+					ArrayList<Course> prerecGroup = new ArrayList<>();
+					if (pe.contains(" or ")) {
+					    String[] orRecList = pe.split("<a h[^>]*>");
+					    for (String opr : orRecList) {
+					        Matcher matcher = matchCourse.matcher(opr);
+					        if (!matcher.matches())
+					            continue;
+					        String[] name = opr.split(" ");
+					        Course temp = new Course(name[0], name[1].substring(0, 4));
+					        prerecGroup.add(temp);
+					    }
+					} else {
+					    String[] orRecList = pe.split("<a h[^>]*>");
+    					if (orRecList.length > 2) System.out.println("There was more than one element when expecting one prerec. TimeTableScrapper getPrerecs");
+    					String[] name;
+    					if (!matchCourse.matcher(orRecList[0]).matches())
+    					    name = orRecList[1].split(" ");
+    					else
+    					    name = orRecList[0].split(" ");
+    					Course temp = new Course(name[0], name[1].substring(0, 4));
+    					prerecGroup.add(temp);
+					}
+					prereqs.add(prerecGroup);
 				}
 				break;
 			}
@@ -163,4 +198,11 @@ public class TimetableScraper {
 		// Return array
 		return prereqs;
 	}
+
+    @Override
+    public void run()
+    {
+        courses = getCourses(subj, crse, year);
+
+    }
 }

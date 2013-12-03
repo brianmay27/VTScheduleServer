@@ -15,9 +15,7 @@ import org.jasypt.util.text.BasicTextEncryptor;
 
 // -------------------------------------------------------------------------
 /**
- *  Write a one-sentence summary of your class here.
- *  Follow it with additional details about its purpose, what abstraction
- *  it represents, and how to use it.
+ *  Class used to recieve requests from users and begin the correct processing
  *
  *  @author Brian
  *  @version Nov 17, 2013
@@ -36,6 +34,12 @@ public class UserRequest extends HttpServlet
             int minCredit = Integer.valueOf(request.getParameter("min"));
             int maxCredit = Integer.valueOf(request.getParameter("max"));
             String major = request.getParameter("major");
+            ArrayList<String> aditCourse = new ArrayList<>();
+            int i = 0;
+            String clas;
+            while ((clas = request.getParameter("class" + String.valueOf(i++))) != null) {
+                aditCourse.add(clas);
+            }
             System.out.println("Got a request");
             try
             {
@@ -49,7 +53,7 @@ public class UserRequest extends HttpServlet
                 }
                 try
                 {
-                    getDARS dars = new getDARS(student, username.toCharArray(), password, minCredit, maxCredit, major);
+                    getDARS dars = new getDARS(student, username.toCharArray(), password, minCredit, maxCredit, major, aditCourse);
                     responce.setStatus(HttpServletResponse.SC_OK);
                     responce.getWriter().write(String.valueOf(dars.id) +"\r");
                     responce.flushBuffer();
@@ -94,11 +98,11 @@ public class UserRequest extends HttpServlet
                 if (schedule != null)
                 {
                     // return null or something
-                    ArrayList<Schedule> retVal = new ArrayList<>(schedule.subList(section * 5, (section * 5) + 4));
+                    ArrayList<Schedule> retVal = new ArrayList<>(schedule.subList(section * 5, (section * 5) + 5));
                         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                             ObjectOutput out = new ObjectOutputStream(bos))
                             {
-                            out.writeObject(schedule);
+                            out.writeObject(retVal);
                             data = bos.toByteArray();
                             }
                         catch (Exception e)

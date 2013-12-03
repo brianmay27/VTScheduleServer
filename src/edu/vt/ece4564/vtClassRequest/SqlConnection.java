@@ -16,9 +16,8 @@ import java.sql.Statement;
 
 // -------------------------------------------------------------------------
 /**
- *  Write a one-sentence summary of your class here.
- *  Follow it with additional details about its purpose, what abstraction
- *  it represents, and how to use it.
+ * Used to connect the the SQL database and allow methods
+ * to read and write to the database to save and restore info
  *
  *  @author Brian
  *  @version Nov 17, 2013
@@ -27,6 +26,9 @@ import java.sql.Statement;
 public class SqlConnection
 {
     private Connection c;
+    /**
+     * Create a new SqlConnection object.
+     */
     public SqlConnection() {
         try
         {
@@ -40,6 +42,11 @@ public class SqlConnection
             e.printStackTrace();
         }
     }
+    /**
+     * Gets all the students in the database
+     * @return map of student pid to their class
+     * @throws SQLException
+     */
     protected HashMap<String, Student> getStudents() throws SQLException {
         Statement stmt = null;
         ResultSet result = null;
@@ -81,6 +88,12 @@ public class SqlConnection
         System.out.println("created table");
     }
 
+    /**
+     * Add a student to the sql
+     * @param student the student to add
+     * @return false if the user exists already or it failed and true if it added the user
+     * @throws SQLException
+     */
     public boolean addStudent(Student student) throws SQLException {
         PreparedStatement stmt = null;
         try
@@ -137,6 +150,12 @@ public class SqlConnection
             }
         return true;
     }
+    /**
+     * replaces a student in the database
+     * @param student student to save
+     * @return false if failed or student does not exist, true if it passed
+     * @throws SQLException
+     */
     public boolean updateStudent(Student student) throws SQLException {
         PreparedStatement stmt = null;
         ResultSet result = null;
@@ -179,6 +198,12 @@ public class SqlConnection
 
     }
 
+    /**
+     * Gets a student account
+     * @param name the PId of the user
+     * @return the student
+     * @throws SQLException
+     */
     public Student getStudent(String name) throws SQLException{
         PreparedStatement stmt = null;
         ResultSet result = null;

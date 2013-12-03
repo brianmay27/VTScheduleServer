@@ -1,5 +1,9 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import javax.rmi.CORBA.Tie;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.http.auth.InvalidCredentialsException;
 import javax.servlet.http.HttpServletResponse;
 import edu.vt.ece4564.shared.Course;
@@ -25,9 +29,8 @@ import javax.security.auth.login.LoginException;
 
 // -------------------------------------------------------------------------
 /**
- *  Write a one-sentence summary of your class here.
- *  Follow it with additional details about its purpose, what abstraction
- *  it represents, and how to use it.
+ *  Provides the a runnable way to fetch and return all classes needed and the
+ *  Necessary information about them.
  *
  *  @author Brian
  *  @version Nov 10, 2013
@@ -47,9 +50,21 @@ public class getDARS implements Runnable
     private int min;
     private int max;
     private boolean gotNewWhatIf = false;
-    ArrayList<Schedule> schedules = null;
-    long id;
-    public getDARS(Student student, char[] userName, char[] password, int min, int max, String major) throws LoginException {
+    private ArrayList<Schedule> schedules = null;
+    protected long id;
+    private ArrayList<String> aditCourse;
+    /**
+     *
+     * Create a new getDARS object.
+     * @param student the student whos request this is
+     * @param userName users username
+     * @param password users password not encrypted
+     * @param min minimum number of credits user wants to take
+     * @param max maximum number of credits the user want to take
+     * @param major their major in a DARS formated string
+     * @throws LoginException
+     */
+    public getDARS(Student student, char[] userName, char[] password, int min, int max, String major, ArrayList<String> aditCourse) throws LoginException {
         this.student = student;
         cas = new CASManager();
         cas.setCredentials(userName, password);
@@ -60,6 +75,7 @@ public class getDARS implements Runnable
         this.max = max;
         this.min = min;
         this.major = major;
+        this.aditCourse = aditCourse;
     }
     @Override
     public void run()
@@ -76,18 +92,34 @@ public class getDARS implements Runnable
                 ParseDars dars = new ParseDars(student.getLatestDars());
                 student.setClassesNeeded(dars);
             }
-                ArrayList<Course> ClassMap = new ArrayList<>();
                 ArrayList<Course> coursesAll = new ArrayList<>();
+                ExecutorService threads = Executors.newFixedThreadPool(10);
+                ArrayList<TimetableScraper> thread = new ArrayList<>();
                 for (String course : student.getClassesNeeded().arrayPreBrian) {
                     String[] split = course.split(" ");
-                    ArrayList<Course> courses = TimetableScraper.getCourses(split[1].toUpperCase(), split[2], "201401");
+                    TimetableScraper time = new TimetableScraper(split[1].toUpperCase(), split[2], "201401");
+                    thread.add(time);
+                    threads.submit(time);
+                }
+                for (String str : aditCourse) {
+                    String[] split = str.split(" ");
+                    TimetableScraper time = new TimetableScraper(split[0].toUpperCase(), split[1], "201401");
+                    thread.add(time);
+                    threads.submit(time);
+                }
+                threads.shutdown();
+                while (!threads.isTerminated()) {
+                    Thread.sleep(500);
+                }
+                for (TimetableScraper scraper : thread) {
+                    ArrayList<Course> courses = scraper.getCourses();
                     if (courses == null) continue;
                     coursesAll.addAll(courses);
                     //System.out.println(split[1] + " " + split[2]);
                     for (Course timeCourse: courses) {
                         System.out.println("  : " + timeCourse.toString());
                     }
-            }
+                }
                 ArrayList<Course> removedNN = removeClassesWOPre(coursesAll, student.getClassesNeeded().arrayTakenCourse);
                 schedules = Scheduler.makeSchedules(min, max, removedNN);
                 student.putSchedules(schedules, id);
@@ -104,23 +136,27 @@ public class getDARS implements Runnable
         }
 
     }
-    protected ArrayList<Course> removeClassesWOPre(ArrayList<Course> needed, ArrayList<Course> taken) {
+    private ArrayList<Course> removeClassesWOPre(ArrayList<Course> needed, ArrayList<Course> taken) {
         ArrayList<Course> ret = new ArrayList<>();
         for (Course course : needed) {
             boolean allContained = true;
-            if (course.getPrereqs() != null && course.getPrereqs()[0] != null) {
-                for (Course prerec : course.getPrereqs()) {
-                    if (!taken.contains(prerec)) {
-                        allContained = false;
-                        break;
+            if (course.getPrereqs() != null && course.getPrereqs().get(0) != null) {
+                for (ArrayList<Course> prerec : course.getPrereqs()) {
+                    boolean orTaken = false;
+                    for (Course pre : prerec) {
+                        if (taken.contains(pre)) {
+                            orTaken = true;
+                            break;
+                        }
                     }
+                    if (orTaken == false) allContained = false;
                 }
             }
             if (allContained) ret.add(course);
         }
         return ret;
     }
-    protected void requestWhatIf(String SessionId, String IdmSession, String Major) throws Exception {
+    private void requestWhatIf(String SessionId, String IdmSession, String Major) throws Exception {
         HttpsURLConnection conn = (HttpsURLConnection)new URL(runWhatIf).openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Referer", "https://banweb.banner.vt.edu/ssb/prod/hzsksaud.P_WhatIf");
@@ -141,9 +177,9 @@ public class getDARS implements Runnable
         if (responce.equals(HttpServletResponse.SC_FORBIDDEN)) throw new InvalidCredentialsException("Invalid password");
         requestCheckDars.scheduleAtFixedRate(checkDars, 10000, 15000);
     }
-    protected Timer requestCheckDars = new Timer();
+    private Timer requestCheckDars = new Timer();
 
-    protected TimerTask checkDars = new TimerTask() {
+    private TimerTask checkDars = new TimerTask() {
 
         @Override
         public void run()
@@ -186,7 +222,7 @@ public class getDARS implements Runnable
         }
     };
 
-    protected void processWhatIf(String sessID, String IDMSess, String url) {
+    private void processWhatIf(String sessID, String IDMSess, String url) {
         try {
             HttpsURLConnection conn = (HttpsURLConnection) new URL(url).openConnection();
             conn.setRequestMethod("GET");

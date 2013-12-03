@@ -5,9 +5,7 @@ import java.io.Serializable;
 
 // -------------------------------------------------------------------------
 /**
- *  Write a one-sentence summary of your class here.
- *  Follow it with additional details about its purpose, what abstraction
- *  it represents, and how to use it.
+ *  Used to help make parsisting the student class easy
  *
  *  @author Brian
  *  @version Nov 20, 2013

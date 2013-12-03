@@ -81,8 +81,8 @@ public class ParseDars implements Serializable
                         .contains(
                                 "auditLineType_25_noSubrequirementNeedsSummaryLine"))) {
 
-                    maker.requiremnetHours = parse25(arrayCourseRefined.get(i)
-                            .get(j));
+                    //maker.requiremnetHours = parse25(arrayCourseRefined.get(i)
+                           // .get(j));
                 }
             }
             if(maker.requirementName.contains("SAMEAS:")){

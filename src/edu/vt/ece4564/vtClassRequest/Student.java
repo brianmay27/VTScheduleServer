@@ -6,6 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+// -------------------------------------------------------------------------
+/**
+ *  This class represents a user/student. All the info needed about them
+ *  is stored here which gets backed up to the sql database
+ *
+ *  @author Brian
+ *  @version Dec 3, 2013
+ */
 public class Student extends Persistable implements Serializable {
 
 	private Map<String,String> courseHistory;

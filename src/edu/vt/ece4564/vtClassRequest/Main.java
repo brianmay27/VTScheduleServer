@@ -23,9 +23,7 @@ import javax.servlet.http.HttpServlet;
 
 // -------------------------------------------------------------------------
 /**
- *  Write a one-sentence summary of your class here.
- *  Follow it with additional details about its purpose, what abstraction
- *  it represents, and how to use it.
+ *  Starts the server!
  *
  *  @author Brian
  *  @version Nov 17, 2013
@@ -65,6 +63,11 @@ public class Main extends HttpServlet
 //        }
 //    }
 
+    /**
+     *Starting point
+     * @param args none needed
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
        try
         {
