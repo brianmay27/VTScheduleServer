@@ -102,7 +102,7 @@ public class UserRequest extends HttpServlet
                         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                             ObjectOutput out = new ObjectOutputStream(bos))
                             {
-                            out.writeObject(retVal);
+                            out.writeObject(schedule);
                             data = bos.toByteArray();
                             }
                         catch (Exception e)

@@ -163,30 +163,62 @@ public class CourseTime implements Serializable {
 		String[] strarray = daystr.split(" ");
 		for(int i = 0; i < strarray.length; ++i) {
 			int d = -1;
-			switch(strarray[i]) {
-			case "M":
-				d = MONDAY;
-				break;
-			case "T":
-				d = TUESDAY;
-				break;
-			case "W":
-				d = WEDNESDAY;
-				break;
-			case "R":
-				d = THURSDAY;
-				break;
-			case "F":
-				d = FRIDAY;
-				break;
-			}
+			if (strarray[i].equals("M")) d = MONDAY;
+			else if (strarray[i].equals("T")) d = TUESDAY;
+			else if (strarray[i].equals("W")) d = WEDNESDAY;
+			else if (strarray[i].equals("R")) d = THURSDAY;
+			else if (strarray[i].equals("F")) d = FRIDAY;
 			darray.add(d);
 		}
 		return darray;
 	}
+	@Override
+	public boolean equals(Object other) {
+	    if (other instanceof String) {
+	        String o = (String)other;
+	        if (this.days.contains(dayStringToInt(o))) return true;
+	        else return false;
+	    }
+	    else return false;
+	}
+	private int dayStringToInt(String day) {
+	    int dayr = 0;
+	    if (day.toLowerCase().equals("monday")) dayr = 1;
+	    else if (day.toLowerCase().equals("tuesday")) dayr = 2;
+	    else if (day.toLowerCase().equals("wednesday")) dayr = 3;
+	    else if (day.toLowerCase().equals("thursday")) dayr = 4;
+	    else if (day.toLowerCase().equals("friday")) dayr = 5;
+	    return dayr;
+	}
 
 	public String toString() {
-		return daysToString(days) + " " + startTime / 60 + ":" + startTime % 60 + "-" + endTime / 60 + ":" + endTime % 60;
+		int start = startTime / 60;
+		int end = endTime / 60;
+		String startStr, endStr;
+		String startChar = "";
+		String endChar = "";
+		if (start > 12) {
+			start = start - 11;
+			startStr = "PM";
+		} else {
+			startStr = "AM";
+		}
+		if (end > 12) {
+			end = end - 11;
+			endStr = "PM";
+		} else {
+			endStr = "AM";
+		}
+
+		if (((int) (Math.log10(startTime % 60) + 1)) < 2) {
+			startChar = "0";
+		}
+		if (((int) (Math.log10(endTime % 60) + 1)) < 2) {
+			endChar = "0";
+		}
+		return daysToString(days) + " " + start + ":" + startTime % 60
+				+ startChar + startStr + "-" + end + ":" + endTime % 60
+				+ endChar + endStr;
 	}
 
 	private String daysToString(Collection<? extends Integer> days) {
