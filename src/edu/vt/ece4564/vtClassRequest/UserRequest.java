@@ -34,6 +34,7 @@ public class UserRequest extends HttpServlet
             int minCredit = Integer.valueOf(request.getParameter("min"));
             int maxCredit = Integer.valueOf(request.getParameter("max"));
             String major = request.getParameter("major");
+            String useDars = request.getParameter("usedars");
             ArrayList<String> aditCourse = new ArrayList<>();
             int i = 0;
             String clas;
@@ -53,7 +54,7 @@ public class UserRequest extends HttpServlet
                 }
                 try
                 {
-                    getDARS dars = new getDARS(student, username.toCharArray(), password, minCredit, maxCredit, major, aditCourse);
+                    getDARS dars = new getDARS(student, username.toCharArray(), password, minCredit, maxCredit, major, aditCourse, Boolean.getBoolean(useDars));
                     responce.setStatus(HttpServletResponse.SC_OK);
                     responce.getWriter().write(String.valueOf(dars.id) +"\r");
                     responce.flushBuffer();
@@ -77,7 +78,9 @@ public class UserRequest extends HttpServlet
             String username = request.getParameter("username");
             String encryptedPasswd = request.getParameter("passwd");
             char[] password = encrypter.decrypt(encryptedPasswd).toCharArray();
-            long id = Long.valueOf(request.getParameter("id"));
+            String loc = request.getParameter("id");
+            long id;
+
             int section = Integer.valueOf(request.getParameter("loc"));
             try
             {
@@ -93,16 +96,27 @@ public class UserRequest extends HttpServlet
                         // Password is bad
                     }
                 }
-                ArrayList<Schedule> schedule = student.getSchedules(id);
+                ArrayList<Schedule> schedule;
+                if (loc.equals("last")) {
+                    schedule = student.getLastSchedule();
+                } else {
+                     id = Long.valueOf(request.getParameter("id"));
+                    schedule = student.getSchedules(id);
+                }
                 byte[] data = null;
                 if (schedule != null)
                 {
                     // return null or something
-                    ArrayList<Schedule> retVal = new ArrayList<>(schedule.subList(section * 5, (section * 5) + 5));
-                        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ArrayList<Schedule> retVal;
+                    if (schedule.size() > (section * 50) + 50) {
+                    retVal = new ArrayList<>(schedule.subList(section * 50, (section * 50) + 50));
+                    } else {
+                        retVal = new ArrayList<>(schedule.subList(section * 50, schedule.size()));
+                    }
+                    try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
                             ObjectOutput out = new ObjectOutputStream(bos))
                             {
-                            out.writeObject(schedule);
+                            out.writeObject(retVal);
                             data = bos.toByteArray();
                             }
                         catch (Exception e)

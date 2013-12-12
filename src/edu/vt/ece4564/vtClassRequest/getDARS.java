@@ -53,6 +53,7 @@ public class getDARS implements Runnable
     private ArrayList<Schedule> schedules = null;
     protected long id;
     private ArrayList<String> aditCourse;
+    private boolean useDars;
     /**
      *
      * Create a new getDARS object.
@@ -64,7 +65,7 @@ public class getDARS implements Runnable
      * @param major their major in a DARS formated string
      * @throws LoginException
      */
-    public getDARS(Student student, char[] userName, char[] password, int min, int max, String major, ArrayList<String> aditCourse) throws LoginException {
+    public getDARS(Student student, char[] userName, char[] password, int min, int max, String major, ArrayList<String> aditCourse, boolean useDars) throws LoginException {
         this.student = student;
         cas = new CASManager();
         cas.setCredentials(userName, password);
@@ -76,6 +77,7 @@ public class getDARS implements Runnable
         this.min = min;
         this.major = major;
         this.aditCourse = aditCourse;
+        this.useDars = useDars;
     }
     @Override
     public void run()
@@ -101,6 +103,7 @@ public class getDARS implements Runnable
                     thread.add(time);
                     threads.submit(time);
                 }
+
                 for (String str : aditCourse) {
                     String[] split = str.split(" ");
                     TimetableScraper time = new TimetableScraper(split[0].toUpperCase(), split[1], "201401");

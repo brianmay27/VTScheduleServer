@@ -1,5 +1,6 @@
 package edu.vt.ece4564.vtClassRequest;
 
+import java.util.Date;
 import edu.vt.ece4564.shared.Schedule;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -113,5 +114,14 @@ public class Student extends Persistable implements Serializable {
 	public synchronized void setMajor(String major) {
 		this.major = major;
 		Persist(this);
+	}
+	public ArrayList<Schedule> getLastSchedule() {
+	    Date last = null;
+	    for (Long time : schedules.keySet()) {
+	        Date cal = new Date(time);
+	        if (last == null) last = cal;
+	        else if (cal.after(last)) last = cal;
+	    }
+	    return schedules.get(last.getTime());
 	}
 }
